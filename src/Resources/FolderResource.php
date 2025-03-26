@@ -111,8 +111,6 @@ class FolderResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $query
-                ->whereAccessibleBy(auth()->user());
                 if(request()->has('model_type') && !request()->has('collection')){
                     $query->where('model_type', request()->get('model_type'))
                         ->where('model_id', null)
@@ -127,6 +125,8 @@ class FolderResource extends Resource
                     $query->where('model_id', null)
                         ->where('collection', null)->orWhere('model_type', null);
                 }
+
+                $query->whereAccessibleBy(auth()->user());
             })
             ->content(function () {
                 return view('filament-media-manager::pages.folders');
