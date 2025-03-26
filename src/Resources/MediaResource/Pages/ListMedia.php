@@ -66,30 +66,44 @@ class ListMedia extends ManageRecords
         $folder_id = $this->folder_id;
 
         $folder = config('filament-media-manager.model.folder')::find($folder_id);
-
-        if (auth()->user()?->canManipulateMediaAndFolder($folder_id)) {
-            if (filament('filament-media-manager')->allowUserAccess && (!empty($folder->user_id))) {
-                if ($folder->user_id === auth()->user()->id && $folder->user_type === get_class(auth()->user())) {
-                    return [
-                        CreateMediaAction::make($folder_id),
-                        CreateSubFolderAction::make($folder_id),
-                        DeleteFolderAction::make($folder_id),
-                        EditCurrentFolderAction::make($folder_id),
-                    ];
-                } else {
-                    return [];
+        $headerActions = [];
+        $user = auth()->user();
+        if (filament('filament-media-manager')->allowUserAccess && (!empty($folder->user_id))) {
+            if ($folder->user_id === auth()->user()->id && $folder->user_type === get_class(auth()->user())) {
+                if ($user?->canCreateMedia($folder_id)) {
+                    $headerActions[] = CreateMediaAction::make($folder_id);
                 }
+                if ($user->canCreateSubFolder($folder_id)) {
+                    $headerActions[] = CreateSubFolderAction::make($folder_id);
+                }
+                if ($user->canDeleteFolder($folder_id)) {
+                    $headerActions[] = DeleteFolderAction::make($folder_id);
+                }
+
+                if ($user->editCurrentFolder($folder_id)) {
+                    $headerActions[] = EditCurrentFolderAction::make($folder_id);
+                }
+                return $headerActions;
             } else {
-                return [
-                    CreateMediaAction::make($folder_id),
-                    CreateSubFolderAction::make($folder_id),
-                    DeleteFolderAction::make($folder_id),
-                    EditCurrentFolderAction::make($folder_id),
-                ];
+                return [];
+            }
+        } else {
+            if ($user?->canCreateMedia($folder_id)) {
+                $headerActions[] = CreateMediaAction::make($folder_id);
+            }
+            if ($user->canCreateSubFolder($folder_id)) {
+                $headerActions[] = CreateSubFolderAction::make($folder_id);
+            }
+            if ($user->canDeleteFolder($folder_id)) {
+                $headerActions[] = DeleteFolderAction::make($folder_id);
+            }
+
+            if ($user->editCurrentFolder($folder_id)) {
+                $headerActions[] = EditCurrentFolderAction::make($folder_id);
             }
         }
 
-        return [];
+        return $headerActions;
     }
 
     public function folderAction(?Folder $item = null)
