@@ -88,6 +88,8 @@ class ListMedia extends ManageRecords
                 ];
             }
         }
+
+        return [];
     }
 
     public function folderAction(?Folder $item = null)
