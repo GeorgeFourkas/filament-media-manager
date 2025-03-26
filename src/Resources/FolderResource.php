@@ -111,6 +111,8 @@ class FolderResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
+                $query
+                ->whereAccessibleBy(auth()->user());
                 if(request()->has('model_type') && !request()->has('collection')){
                     $query->where('model_type', request()->get('model_type'))
                         ->where('model_id', null)
