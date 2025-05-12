@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MediaResource extends Resource
 {
-
     protected static bool $isScopedToTenant = false;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 

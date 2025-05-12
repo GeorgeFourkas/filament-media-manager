@@ -176,9 +176,12 @@ class ListMedia extends ManageRecords
     public function deleteMedia()
     {
         return Actions\Action::make('deleteMedia')
-            ->label(trans('filament-media-manager::messages.media.meta.delete-media'))
+            ->label('Διαγραφή')
             ->icon('heroicon-s-trash')
             ->color('danger')
+            ->visible(function () {
+                return auth()->user()->canDeleteMediaFromSubfolder(request()->get('folder_id'));
+            })
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $media = Media::find($arguments['record']['id']);
