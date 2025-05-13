@@ -18,7 +18,7 @@ class ListFolders extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        if (auth()->user()?->canCreateFolders()) {
+        if (auth()->user()?->canCreateFolders(request()->get('folder_id'))) {
             return [
                 Actions\CreateAction::make(),
             ];
