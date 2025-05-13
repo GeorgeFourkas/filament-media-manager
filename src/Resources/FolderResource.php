@@ -20,7 +20,6 @@ class FolderResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
-
     protected static ?string $navigationIcon = 'heroicon-o-folder';
 
 

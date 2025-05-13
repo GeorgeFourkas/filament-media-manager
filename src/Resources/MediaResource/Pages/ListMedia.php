@@ -3,18 +3,11 @@
 namespace TomatoPHP\FilamentMediaManager\Resources\MediaResource\Pages;
 
 use App\Models\User;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
+use Filament\Actions;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use TomatoPHP\FilamentIcons\Components\IconPicker;
 use TomatoPHP\FilamentMediaManager\Models\Folder;
 use TomatoPHP\FilamentMediaManager\Models\Media;
 use TomatoPHP\FilamentMediaManager\Resources\Actions\CreateMediaAction;
@@ -22,8 +15,6 @@ use TomatoPHP\FilamentMediaManager\Resources\Actions\CreateSubFolderAction;
 use TomatoPHP\FilamentMediaManager\Resources\Actions\DeleteFolderAction;
 use TomatoPHP\FilamentMediaManager\Resources\Actions\EditCurrentFolderAction;
 use TomatoPHP\FilamentMediaManager\Resources\MediaResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 
 class ListMedia extends ManageRecords
 {
@@ -175,23 +166,22 @@ class ListMedia extends ManageRecords
 
     public function deleteMedia()
     {
+        $canDeleteMedia = auth()->user()->canDeleteMediaFromSubfolder(request()->get('folder_id'));
         return Actions\Action::make('deleteMedia')
+            ->extraAttributes(['class' => $canDeleteMedia ? '' : 'hidden'])
             ->label('Διαγραφή')
+            ->disabled(fn() => !$canDeleteMedia)
             ->icon('heroicon-s-trash')
             ->color('danger')
-            ->visible(function () {
-                return auth()->user()->canDeleteMediaFromSubfolder(request()->get('folder_id'));
-            })
             ->requiresConfirmation()
             ->action(function (array $arguments) {
                 $media = Media::find($arguments['record']['id']);
                 $media->delete();
 
                 Notification::make()
-                    ->title(trans('filament-media-manager::messages.media.notifications.delete-folder'))
+                    ->title('Το αρχείο διαγράφηκε')
                     ->success()
                     ->send();
             });
-
     }
 }
