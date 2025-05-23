@@ -17,7 +17,7 @@
                 @if($item instanceof \TomatoPHP\FilamentMediaManager\Models\Folder)
                     {{ ($this->folderAction($item))(['record' => $item]) }}
                 @else
-                    <x-filament::modal width="3xl" slide-over>
+                    <x-filament::modal width="full" slide-over>
                         <x-slot name="trigger" class="w-full h-full">
                             <div class="flex flex-col justify-start gap-4 border dark:border-gray-700 rounded-lg shadow-sm p-2 w-full h-full">
                                 <div class="flex flex-col items-center justify-center  p-4 h-full">
